@@ -46,6 +46,16 @@ request body
 Check your wallet
 http://localhost:8000/api/wallets/6
 method = get
+
+
+/////////////////////////////////////
+Users list use charge code
+http://localhost:8000/api/discounts/report
+method = post
+request body
+{
+  "code": "Arvan-football"
+}
 ```
 
 --------------------------------------------------------
