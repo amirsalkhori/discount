@@ -1,4 +1,4 @@
-# Arvan challenge
+# Discount challenge
 
 ### Requirements
 -   PHP 8.0 (included in Docker)
