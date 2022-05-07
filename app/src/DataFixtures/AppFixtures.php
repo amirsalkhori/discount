@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Discount;
+use App\Entity\DiscountUser;
 use App\Entity\Enum\DiscountTypeEnum;
 use App\Entity\User;
 use App\Entity\Wallet;
@@ -60,6 +61,16 @@ class AppFixtures extends Fixture
         $discount->setUpdatedAt(new \DateTime());
         $discount->setStatus(true);
         $this->entityManager->persist($discount);
+
+        $this->entityManager->flush();
+
+        //create discountCode
+        $discountUser = new DiscountUser();
+        $discountUser->setUsers($user);
+        $discountUser->setDiscount($discount);
+        $discountUser->setCreatedAt(new \DateTime());
+        $discountUser->setUpdatedAt(new \DateTime());
+        $this->entityManager->persist($discountUser);
 
         $this->entityManager->flush();
     }
