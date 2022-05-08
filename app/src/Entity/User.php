@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(collectionOperations: [
     'post'=> ["security" => "is_granted('ROLE_ADMIN')"],
@@ -43,7 +44,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
         'get'=> ["security_post_denormalize" => "is_granted('USER_READ', object)"],
         'delete'=> ["security" => "is_granted('ROLE_ADMIN')"],
         'put'=> ["security_post_denormalize" => "is_granted('USER_UPDATE', object)"]
-    ])
+    ],
+    attributes: [
+        'normalization_context' => ['groups' => ['user_read']],
+        'denormalization_context' => ['groups' => ['user_write']],]
+)
 ]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -52,18 +57,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, UserHas
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user_read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $email;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
+    #[Groups(["user_read", "user_write"])]
     private $phoneNumber;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $password;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(["user_read"])]
     private $roles = [];
 
     #[ORM\OneToMany(mappedBy: 'users', targetEntity: DiscountUser::class)]
@@ -71,9 +79,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, UserHas
     private $discountUsers;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(["user_read"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(["user_read"])]
     private $updatedAt;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Wallet::class)]

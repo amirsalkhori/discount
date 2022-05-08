@@ -11,6 +11,7 @@ use App\Repository\DiscountRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Controller\Discount\DiscountReportController;
 
@@ -45,6 +46,7 @@ use App\Controller\Discount\DiscountReportController;
     'discountReport' => [
         'method' => 'POST',
         'path' => '/discounts/report',
+        "security" => "is_granted('ROLE_ADMIN')",
         'controller' => DiscountReportController::class,
         'openapi_context' => [
             'requestBody' => [
@@ -68,7 +70,11 @@ use App\Controller\Discount\DiscountReportController;
         'get' => ["security" => "is_granted('ROLE_ADMIN')"],
         'delete' => ["security" => "is_granted('ROLE_ADMIN')"],
         'put' => ["security" => "is_granted('ROLE_ADMIN')"],
-    ])
+    ],
+    attributes: [
+        'normalization_context' => ['groups' => ['discount_read']],
+        'denormalization_context' => ['groups' => ['discount_write']],]
+)
 ]
 #[ORM\Entity(repositoryClass: DiscountRepository::class)]
 class Discount implements CreatedAt, UpdatedAt
@@ -76,26 +82,32 @@ class Discount implements CreatedAt, UpdatedAt
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["discount_read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
+    #[Groups(["discount_read", "discount_write"])]
     private $name;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\NotBlank]
+    #[Groups(["discount_read", "discount_write"])]
     private $startTime;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\NotBlank]
+    #[Groups(["discount_read", "discount_write"])]
     private $endTime;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\NotBlank]
+    #[Groups(["discount_read", "discount_write"])]
     private $discountType;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true, unique: true)]
     #[Assert\NotBlank]
+    #[Groups(["discount_read", "discount_write"])]
     private $code;
 
     #[ORM\OneToMany(mappedBy: 'discount', targetEntity: DiscountUser::class)]
@@ -104,18 +116,23 @@ class Discount implements CreatedAt, UpdatedAt
 
     #[ORM\Column(type: 'float', length: 255)]
     #[Assert\NotBlank]
+    #[Groups(["discount_read", "discount_write"])]
     private $amount = 0;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(["discount_read"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(["discount_read"])]
     private $updatedAt;
 
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(["discount_read", "discount_write"])]
     private $limite;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
+    #[Groups(["discount_read", "discount_write"])]
     private $status = true;
 
     public function __construct()

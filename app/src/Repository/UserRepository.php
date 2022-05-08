@@ -83,6 +83,10 @@ class UserRepository extends ServiceEntityRepository
             ->innerJoin('discountUsers.discount', 'discount')
             ->andWhere('discount.code = :code')
             ->setParameter('code', $code)
+            ->select(
+                'u.id as id',
+                'u.phoneNumber as phoneNumber',
+            )
             ->getQuery()
             ->getResult();
     }
