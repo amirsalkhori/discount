@@ -17,10 +17,13 @@ final class WalletService
     public function createWallet($user)
     {
         $wallet = new Wallet();
-        $wallet->setAmount('0');
+        $wallet->setAfterAmount(0.0);
+        $wallet->setBeforeAmount(0.0);
+        $wallet->setEffectiveAmount(0.0);
+        $wallet->setReason('Create wallet');
+        $wallet->setStatus(1);
         $wallet->setOwner($user);
         $wallet->setCreatedAt(new \DateTime());
-        $wallet->setUpdatedAt(new \DateTime());
         $wallet->setUpdatedAt(new \DateTime());
         $this->entityManager->persist($wallet);
 

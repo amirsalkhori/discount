@@ -73,15 +73,18 @@ final class DiscountService
         } else {
             //Add user discount
             $this->discountUserService->createDiscountUser($user, $discount);
-            /**
-             * @var Wallet $wallet
-             */
+
             //Modify user wallet
-            $wallet = $this->entityManager->getRepository(Wallet::class)->findOneBy(['owner' => $user->getId()]);
-            if (!$wallet) {
-                throw new BadRequestException('You have not valid wallet !', 400);
-            }
-            $wallet->setAmount($wallet->getAmount() + $discount->getAmount());
+            $userWallet = $this->entityManager->getRepository(Wallet::class)->findLastWallet($user->getId());
+            $wallet = new Wallet();
+            $wallet->setBeforeAmount($userWallet[0]->getAfterAmount());
+            $wallet->setAfterAmount($userWallet[0]->getAfterAmount() + $discount->getAmount());
+            $wallet->setEffectiveAmount($discount->getAmount());
+            $wallet->setReason('Use charge code');
+            $wallet->setStatus(1);
+            $wallet->setOwner($user);
+            $wallet->setCreatedAt(new \DateTime());
+            $wallet->setUpdatedAt(new \DateTime());
             $this->entityManager->persist($wallet);
 
             $this->entityManager->flush();

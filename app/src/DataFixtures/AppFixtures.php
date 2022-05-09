@@ -40,7 +40,11 @@ class AppFixtures extends Fixture
 
         // Create wallet for our user
         $wallet = new Wallet();
-        $wallet->setAmount(0);
+        $wallet->setAfterAmount(5000000);
+        $wallet->setBeforeAmount(0.0);
+        $wallet->setEffectiveAmount(5000000);
+        $wallet->setReason('Use charge code');
+        $wallet->setStatus(1);
         $wallet->setOwner($user);
         $wallet->setCreatedAt(new \DateTime());
         $wallet->setUpdatedAt(new \DateTime());

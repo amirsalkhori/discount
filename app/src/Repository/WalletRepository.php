@@ -75,4 +75,16 @@ class WalletRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findLastWallet($userId)
+    {
+        return $this->createQueryBuilder('w')
+            ->innerJoin('w.owner', 'owner')
+            ->andWhere('owner.id = :ownerId')
+            ->setParameter('ownerId', $userId)
+            ->orderBy('w.id', 'desc')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getResult();
+    }
 }
