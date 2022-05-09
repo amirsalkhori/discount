@@ -69,6 +69,4 @@ You need token to show your transaction and show your amount
 --------------------------------------------------------
 ### Testing
 
-If you run docker you can use the following command to perform a test over your class
-
--   `docker-compose exec php php vendor/bin/phpunit --testdox`
+-   `docker-compose exec php bin/phpunit`
