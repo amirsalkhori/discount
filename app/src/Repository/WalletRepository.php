@@ -87,4 +87,14 @@ class WalletRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getResult();
     }
+
+    public function getWalletCollection()
+    {
+        return $this->createQueryBuilder('w')
+            ->innerJoin('w.owner', "owner")
+            ->where("owner.id = :ownerId")
+            ->select(['w'])
+            ->orderBy('w.id', 'desc')
+            ->getDQL();
+    }
 }

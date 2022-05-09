@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Bridge\CreatedAt;
 use App\Bridge\UpdatedAt;
 use App\Repository\WalletRepository;
@@ -10,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(collectionOperations: [
-    'get' => ["security" => "is_granted('ROLE_ADMIN')"],
+    'get' => ["security" => "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"],
     'post' => ["security" => "is_granted('ROLE_ADMIN')"],
 ],
     itemOperations: [
@@ -23,6 +26,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'denormalization_context' => ['groups' => ['wallet_write']],]
 )
 ]
+#[ApiFilter(SearchFilter::class, properties:
+    [
+        'owner.id' => 'exact',
+    ])]
+#[ApiFilter(OrderFilter::class)]
 #[ORM\Entity(repositoryClass: WalletRepository::class)]
 class Wallet implements CreatedAt, UpdatedAt
 {
