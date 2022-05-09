@@ -59,7 +59,7 @@ final class DiscountService
             // Add wallet for user
             $this->walletService->createWallet($user);
         }
-        //Discount limitation
+        //Check discount limitation
         $countDiscountUser = $this->entityManager->getRepository(DiscountUser::class)->findBy(
             ['discount' => $discount->getId()]);
         if (count($countDiscountUser) > $discount->getLimite()) {
