@@ -108,4 +108,32 @@ final class DiscountService
 
         return $UserUseDiscount;
     }
+
+    public function checkValidDiscountCode($code, $mount, $user)
+    {
+        $totalAmountDiscount = 0.0;
+        $discountAmount = 0.0;
+        $checkValidDiscount = $this->entityManager->getRepository(Discount::class)->findValidDiscount($code);
+        if (!$checkValidDiscount){
+            throw new BadRequestException('This code is not valid!', 400);
+        }
+        //Check use discount code
+        $discountUser = $this->entityManager->getRepository(DiscountUser::class)->findOneBy(
+            ['users' => $user->getId(), 'discount' => $checkValidDiscount->getId()]);
+        if ($discountUser)
+            throw new BadRequestException('You have used this code before !', 400);
+        //check discount limitation
+        $countDiscountUser = $this->entityManager->getRepository(DiscountUser::class)->findBy(
+            ['discount' => $checkValidDiscount->getId()]);
+        if (count($countDiscountUser) > $checkValidDiscount->getLimite()) {
+            throw new BadRequestException('This code has expired !', 400);
+        }
+        //Add discountUser
+        $this->discountUserService->createDiscountUser($user, $checkValidDiscount);
+
+        $discountAmount = $checkValidDiscount->getAmount();
+        $totalAmountDiscount = (($mount * $discountAmount) / 100);
+
+        return round(($mount - $totalAmountDiscount), 2);
+    }
 }

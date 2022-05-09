@@ -90,10 +90,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, UserHas
     #[ORM\JoinColumn(nullable: true)]
     private $wallets;
 
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Order::class)]
+    private $orders;
+
     public function __construct()
     {
         $this->discountUsers = new ArrayCollection();
         $this->wallets = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -275,6 +279,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, UserHas
             // set the owning side to null (unless already changed)
             if ($wallet->getOwner() === $this) {
                 $wallet->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getOwner() === $this) {
+                $order->setOwner(null);
             }
         }
 

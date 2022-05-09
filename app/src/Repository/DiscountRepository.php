@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Discount;
+use App\Entity\Enum\DiscountTypeEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -82,9 +83,26 @@ class DiscountRepository extends ServiceEntityRepository
         $today = $currentDateTime->format('Y-m-d H:i:s');
 
         return $this->createQueryBuilder('d')
-            ->where('d.status = true AND (d.endTime >= :today AND  d.startTime <= :today) AND d.code = :code')
+            ->where('d.status = true AND d.discountType = :discountType AND (d.endTime >= :today AND  d.startTime <= :today) AND d.code = :code')
             ->setParameter('today', $today)
             ->setParameter('code', $code)
+            ->setParameter('discountType', DiscountTypeEnum::CHARGE_CODE)
+            ->orderBy('d.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findValidDiscount($code): ?Discount
+    {
+        $currentDateTime = new \DateTime();
+        $today = $currentDateTime->format('Y-m-d H:i:s');
+
+        return $this->createQueryBuilder('d')
+            ->where('d.status = true AND d.discountType = :discountType AND (d.endTime >= :today AND  d.startTime <= :today) AND d.code = :code')
+            ->setParameter('today', $today)
+            ->setParameter('code', $code)
+            ->setParameter('discountType', DiscountTypeEnum::DISCOUNT_CODE)
             ->orderBy('d.id', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
