@@ -64,6 +64,19 @@ Show all transaction per user
 http://localhost:8000/api/wallets?page=1&order[createdAt]=desc
 method = get
 You need token to show your transaction and show your amount
+
+//////////////////////////////////////
+Add order
+http://localhost:8000/api/orders/wowcher
+method = post
+request body
+{
+  "amount": 100,
+  "code": "example"
+}
+You need token to create order
+
+
 ```
 
 --------------------------------------------------------

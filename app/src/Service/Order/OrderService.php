@@ -3,6 +3,7 @@
 namespace App\Service\Order;
 
 use App\Entity\Discount;
+use App\Entity\Order;
 use App\Entity\Wallet;
 use App\Service\Discount\DiscountService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ final class OrderService
 
     public function createOrder($requestBody)
     {
+        $finalAmount = 0.0;
         $user = $this->security->getUser();
         if (!array_key_exists("amount", $requestBody)) {
             throw new BadRequestException("Amount is required!", 400);
@@ -33,10 +35,21 @@ final class OrderService
             $code = trim($requestBody['code']);
 
             $amountDiscount = $this->discountService->checkValidDiscountCode($code, $amount, $user);
-
-            return $this->calculateAmountOrder($amountDiscount, $user);
+            $finalAmount = $amountDiscount;
+            $this->calculateAmountOrder($amountDiscount, $user);
+        }else{
+            $this->calculateAmountOrder($amount, $user);
+            $finalAmount = $amount;
         }
-        return $this->calculateAmountOrder($amount, $user);
+
+        $order = new Order();
+        $order->setAmount($finalAmount);
+        $order->setOwner($user);
+        $this->entityManager->persist($order);
+
+        $this->entityManager->flush();
+
+        return $order;
     }
 
     public function calculateAmountOrder($total, $user)

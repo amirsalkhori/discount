@@ -57,14 +57,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, UserHas
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user_read"])]
+    #[Groups(["user_read", "order_read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $email;
 
     #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
-    #[Groups(["user_read", "user_write"])]
+    #[Groups(["user_read", "user_write", "order_read"])]
     private $phoneNumber;
 
     #[ORM\Column(type: 'string', length: 255)]
