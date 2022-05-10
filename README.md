@@ -12,6 +12,7 @@ It has a docker-compose.yml file to spin up nginx and php containers and postgre
 -    `php bin/console make:migration and php bin/console doctrine:migration:migrate`
      `OR`
 -    `php bin/console doctrine:schema:update -f`
+-    `php bin/console lexik:jwt:generate-keypair`
 -    `bin/console doctrine:fixture:load`
 
 With these commands you can create a user with admin role and a wallet for your user and create a discount
